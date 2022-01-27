@@ -11,16 +11,16 @@ import ru.gb.dictionary.AppState
 import ru.gb.dictionary.model.repository.RepositoryImpl
 import ru.gb.dictionary.model.retrofit.DataSourceRemote
 import ru.gb.dictionary.presenter.MainInteract
+import javax.inject.Inject
 
-class MainViewModel(
-    private val compositeDisposable: CompositeDisposable = CompositeDisposable(),
-    private val interactor: MainInteract = MainInteract(RepositoryImpl(DataSourceRemote())
-    )
+class MainViewModel @Inject constructor(
+    private val interactor: MainInteract,
+
 ) : ViewModel() {
 
     private val liveDataToObserve: MutableLiveData<AppState> = MutableLiveData()
     val liveData: LiveData<AppState> = liveDataToObserve
-
+    private lateinit var compositeDisposable: CompositeDisposable;
 
 
 
@@ -30,6 +30,7 @@ class MainViewModel(
     }
 
     fun getData(word: String, isOnline: Boolean) {
+        compositeDisposable = CompositeDisposable()
         compositeDisposable.add(
             interactor.getData(word, isOnline)
                 .subscribeOn(Schedulers.io())

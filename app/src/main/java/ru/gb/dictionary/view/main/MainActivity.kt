@@ -18,24 +18,30 @@ import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
+import dagger.android.AndroidInjection
 
 
 import ru.gb.dictionary.R
 import ru.gb.dictionary.databinding.ActivityMainBinding
 import ru.gb.dictionary.viewmodel.MainViewModel
+import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity() {
+
+    @Inject
+    internal lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModel: MainViewModel
 
     companion object {
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
             "BOTTOM_SHEET_FRAGMENT"
     }
 
-    private val viewModel: MainViewModel by lazy {
-
-        ViewModelProvider(this).get(MainViewModel::class.java)
-    }
+//    private val viewModel: MainViewModel by lazy {
+//
+//        ViewModelProvider(this).get(MainViewModel::class.java)
+//    }
 
 
     private lateinit var binding: ActivityMainBinding
@@ -51,6 +57,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        AndroidInjection.inject(this)
+        viewModel = viewModelFactory.create(MainViewModel::class.java)
 
         initDrawer(initToolbar())
 
