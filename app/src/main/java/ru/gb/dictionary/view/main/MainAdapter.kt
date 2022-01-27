@@ -53,7 +53,7 @@ class MainAdapter(
 
 
 
-    interface OnListItemClickListener{
+   fun interface OnListItemClickListener{
         fun onItemClick(data: DataModel)
     }
 
