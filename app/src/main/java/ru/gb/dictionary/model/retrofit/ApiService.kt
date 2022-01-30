@@ -1,15 +1,15 @@
 package ru.gb.dictionary.model.retrofit
 
 
-import io.reactivex.rxjava3.core.Observable
+import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Query
 import ru.gb.dictionary.model.data.DataModel
 
 interface ApiService {
     @GET("words/search")
-    fun search(
+    fun searchAsync(
         @Query("search") wordToSearch: String
-    ): Observable<List<DataModel>>
+    ): Deferred<List<DataModel>>
 
 }

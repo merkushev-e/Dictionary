@@ -9,39 +9,27 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.gb.dictionary.AppState
-
-
 import ru.gb.dictionary.view.searchdialog.SearchDialogFragment
-
-
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
-import dagger.android.AndroidInjection
-
-
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.gb.dictionary.R
 import ru.gb.dictionary.databinding.ActivityMainBinding
 import ru.gb.dictionary.viewmodel.MainViewModel
-import javax.inject.Inject
+
 
 
 class MainActivity : AppCompatActivity() {
 
-    @Inject
-    internal lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var viewModel: MainViewModel
+
 
     companion object {
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
             "BOTTOM_SHEET_FRAGMENT"
     }
 
-//    private val viewModel: MainViewModel by lazy {
-//
-//        ViewModelProvider(this).get(MainViewModel::class.java)
-//    }
 
 
     private lateinit var binding: ActivityMainBinding
@@ -58,10 +46,10 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        AndroidInjection.inject(this)
-        viewModel = viewModelFactory.create(MainViewModel::class.java)
 
         initDrawer(initToolbar())
+        val model: MainViewModel by viewModel()
+        viewModel = model
 
         binding.appBarMain.mainContent.searchFab.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
@@ -124,9 +112,9 @@ class MainActivity : AppCompatActivity() {
             error ?: getString(R.string.undefined_error)
         binding.appBarMain.mainContent.reloadButton.setOnClickListener {
             viewModel.getData("hi",true)
-            viewModel.liveData.observe(this, {appState ->
+            viewModel.liveData.observe(this) { appState ->
                 renderData(appState)
-            })
+            }
         }
     }
 
