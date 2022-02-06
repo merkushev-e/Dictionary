@@ -22,19 +22,16 @@ import ru.gb.dictionary.viewmodel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by viewModel()
 
 
     companion object {
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
             "BOTTOM_SHEET_FRAGMENT"
     }
-
-
-
     private lateinit var binding: ActivityMainBinding
-    private var adapter: MainAdapter? = null
 
+    private var adapter: MainAdapter? = null
 
     private val onListItemClickListener =
         MainAdapter.OnListItemClickListener { data ->
@@ -48,16 +45,14 @@ class MainActivity : AppCompatActivity() {
 
 
         initDrawer(initToolbar())
-        val model: MainViewModel by viewModel()
-        viewModel = model
 
         binding.appBarMain.mainContent.searchFab.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
             searchDialogFragment.setOnSearchClickListener { searchWord ->
                 viewModel.getData(searchWord, true)
-                viewModel.liveData.observe(this, { appState ->
+                viewModel.liveData.observe(this) { appState ->
                     renderData(appState)
-                })
+                }
 
             }
             searchDialogFragment.show(
@@ -161,14 +156,14 @@ class MainActivity : AppCompatActivity() {
                 when (item.itemId) {
                     R.id.action_drawer_settings -> {
                         Toast.makeText(
-                            applicationContext, "Settings has opened",
+                            applicationContext, getString(R.string.settings_open),
                             Toast.LENGTH_SHORT
                         ).show()
                         return true
                     }
                     R.id.action_drawer_history -> {
                         Toast.makeText(
-                            applicationContext, "Settings has opened",
+                            applicationContext, getString(R.string.history_open),
                             Toast.LENGTH_SHORT
                         ).show()
                         return true

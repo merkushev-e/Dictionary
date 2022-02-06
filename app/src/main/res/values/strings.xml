@@ -15,4 +15,9 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string name="settings_open">Settings has opened</string>
+    <string name="history_open">History has opened</string>
+
+
+
 </resources>
