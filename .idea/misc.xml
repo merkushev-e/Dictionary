@@ -5,9 +5,12 @@
       <map>
         <entry key="..\:/Android/Professional/Home/Dictionary/app/src/main/res/drawable/bottom_sheet_dialog_background.xml" value="0.27314814814814814" />
         <entry key="..\:/Android/Professional/Home/Dictionary/app/src/main/res/drawable/ic_launcher_background.xml" value="0.27314814814814814" />
+        <entry key="..\:/Android/Professional/Home/Dictionary/app/src/main/res/drawable/ic_load_error_vector.xml" value="0.162" />
+        <entry key="..\:/Android/Professional/Home/Dictionary/app/src/main/res/drawable/ic_no_photo_vector.xml" value="0.162" />
         <entry key="..\:/Android/Professional/Home/Dictionary/app/src/main/res/drawable/side_nav_bar.xml" value="0.2861111111111111" />
+        <entry key="..\:/Android/Professional/Home/Dictionary/app/src/main/res/layout/activity_description.xml" value="0.25" />
         <entry key="..\:/Android/Professional/Home/Dictionary/app/src/main/res/layout/activity_main.xml" value="0.20606884057971014" />
-        <entry key="..\:/Android/Professional/Home/Dictionary/app/src/main/res/layout/app_bar_main.xml" value="0.2246376811594203" />
+        <entry key="..\:/Android/Professional/Home/Dictionary/app/src/main/res/layout/app_bar_main.xml" value="0.16" />
         <entry key="..\:/Android/Professional/Home/Dictionary/app/src/main/res/layout/fragment_search_dialog.xml" value="0.19927536231884058" />
         <entry key="..\:/Android/Professional/Home/Dictionary/app/src/main/res/layout/main_content.xml" value="0.2246376811594203" />
         <entry key="..\:/Android/Professional/Home/Dictionary/app/src/main/res/layout/main_rv_item.xml" value="0.20606884057971014" />

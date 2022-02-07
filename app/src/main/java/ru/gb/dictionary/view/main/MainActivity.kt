@@ -1,34 +1,33 @@
 package ru.gb.dictionary.view.main
 
+
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.gb.dictionary.AppState
-
-
-
-import ru.gb.dictionary.model.data.DataModel
-import ru.gb.dictionary.presenter.MainPresenterImpl
-import ru.gb.dictionary.presenter.Presenter
-import ru.gb.dictionary.view.BaseActivity
 import ru.gb.dictionary.view.searchdialog.SearchDialogFragment
-import ru.gb.dictionary.view.View
-
-
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
-
-
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.gb.dictionary.R
+import ru.gb.dictionary.Utils.convertMeaningsToString
 import ru.gb.dictionary.databinding.ActivityMainBinding
+import ru.gb.dictionary.view.history.HistoryActivity
+import ru.gb.dictionary.viewmodel.MainViewModel
 
 
-class MainActivity : BaseActivity<AppState>() {
+
+class MainActivity : AppCompatActivity() {
+
+    private val viewModel: MainViewModel by viewModel()
+
 
     companion object {
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
@@ -38,12 +37,16 @@ class MainActivity : BaseActivity<AppState>() {
     private lateinit var binding: ActivityMainBinding
     private var adapter: MainAdapter? = null
 
-
-    private val onListItemClickListener: MainAdapter.OnListItemClickListener =
-        object : MainAdapter.OnListItemClickListener {
-            override fun onItemClick(data: DataModel) {
-                Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
-            }
+    private val onListItemClickListener =
+        MainAdapter.OnListItemClickListener { data ->
+            startActivity(
+                DescriptionActivity.getIntent(
+                    this@MainActivity,
+                    data.text!!,
+                    convertMeaningsToString(data.meanings!!),
+                    data.meanings[0].imageUrl
+                )
+            )
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,28 +54,26 @@ class MainActivity : BaseActivity<AppState>() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         initDrawer(initToolbar())
 
         binding.appBarMain.mainContent.searchFab.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
-            searchDialogFragment.setOnSearchClickListener(object :
-                SearchDialogFragment.OnSearchClickListener {
-                override fun onClick(searchWord: String) {
-                    presenter.getData(searchWord, true)
+            searchDialogFragment.setOnSearchClickListener { searchWord ->
+                viewModel.getData(searchWord, true)
+                viewModel.liveData.observe(this) { appState ->
+                    renderData(appState)
                 }
-            })
 
-            searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
+            }
+            searchDialogFragment.show(
+                supportFragmentManager,
+                BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
         }
-
-
     }
 
-    override fun createPresenter(): Presenter<AppState, View> {
-        return MainPresenterImpl()
-    }
 
-    override fun renderData(appState: AppState) {
+     private fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Success -> {
                 val dataModel = appState.data
@@ -95,7 +96,8 @@ class MainActivity : BaseActivity<AppState>() {
                 if (appState.progress != null) {
                     binding.appBarMain.mainContent.progressBarHorizontal.visibility = VISIBLE
                     binding.appBarMain.mainContent.progressBarRound.visibility = GONE
-                    binding.appBarMain.mainContent.progressBarHorizontal.progress = appState.progress
+                    binding.appBarMain.mainContent.progressBarHorizontal.progress =
+                        appState.progress
                 } else {
                     binding.appBarMain.mainContent.progressBarHorizontal.visibility = GONE
                     binding.appBarMain.mainContent.progressBarRound.visibility = VISIBLE
@@ -112,9 +114,13 @@ class MainActivity : BaseActivity<AppState>() {
 
     private fun showErrorScreen(error: String?) {
         showViewError()
-        binding.appBarMain.mainContent.errorTextview.text = error ?: getString(R.string.undefined_error)
+        binding.appBarMain.mainContent.errorTextview.text =
+            error ?: getString(R.string.undefined_error)
         binding.appBarMain.mainContent.reloadButton.setOnClickListener {
-            presenter.getData("hi", true)
+            viewModel.getData("",true)
+            viewModel.liveData.observe(this) { appState ->
+                renderData(appState)
+            }
         }
     }
 
@@ -160,14 +166,14 @@ class MainActivity : BaseActivity<AppState>() {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
                 when (item.itemId) {
                     R.id.action_drawer_settings -> {
-                        Toast.makeText(applicationContext, "Settings has opened",
-                            Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            applicationContext, getString(R.string.settings_open),
+                            Toast.LENGTH_SHORT
+                        ).show()
                         return true
                     }
                     R.id.action_drawer_history -> {
-                        Toast.makeText(applicationContext, "Settings has opened",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        startActivity(Intent(this@MainActivity, HistoryActivity::class.java))
                         return true
                     }
                 }
@@ -178,6 +184,6 @@ class MainActivity : BaseActivity<AppState>() {
     }
 
 
-
 }
+
 
