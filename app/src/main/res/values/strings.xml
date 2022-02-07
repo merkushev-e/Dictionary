@@ -17,7 +17,14 @@
 
     <string name="settings_open">Settings has opened</string>
     <string name="history_open">History has opened</string>
+    <string name="image_stub">image</string>
 
+    <string name="dialog_button_cancel">Cancel</string>
+
+    <string name="dialog_title_device_is_offline">No internet connection</string>
+    <string name="dialog_message_device_is_offline">You can not use app without internet connection. Please, check
+        internet connection.
+    </string>
 
 
 </resources>

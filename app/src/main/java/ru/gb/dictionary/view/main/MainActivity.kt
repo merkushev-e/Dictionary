@@ -15,6 +15,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.gb.dictionary.R
+import ru.gb.dictionary.Utils.convertMeaningsToString
 import ru.gb.dictionary.databinding.ActivityMainBinding
 import ru.gb.dictionary.viewmodel.MainViewModel
 
@@ -35,7 +36,14 @@ class MainActivity : AppCompatActivity() {
 
     private val onListItemClickListener =
         MainAdapter.OnListItemClickListener { data ->
-            Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
+            startActivity(
+                DescriptionActivity.getIntent(
+                    this@MainActivity,
+                    data.text,
+                    convertMeaningsToString(data.meanings),
+                    data.meanings[0].imageUrl
+                )
+            )
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
