@@ -5,17 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.*
 import ru.gb.dictionary.AppState
-import ru.gb.dictionary.presenter.MainInteract
+import ru.gb.dictionary.presenter.HistoryInteractor
 
 
-class MainViewModel (
-    private val interactor: MainInteract
-    ) : ViewModel() {
-
+class HistoryViewModel(private val interactor: HistoryInteractor): ViewModel()  {
 
     private val liveDataToObserve: MutableLiveData<AppState> = MutableLiveData()
     val liveData: LiveData<AppState> = liveDataToObserve
-
 
     protected val viewModelCoroutineScope = CoroutineScope(
         Dispatchers.Main
@@ -24,31 +20,26 @@ class MainViewModel (
             handleError(throwable)
         })
 
-
-    override fun onCleared() {
-        liveDataToObserve.value = AppState.Success(null)
-        cancelJob()
-    }
-
     private fun cancelJob() {
         viewModelCoroutineScope.coroutineContext.cancelChildren()
     }
 
-
-    fun getData(word: String, isOnline: Boolean) {
+     fun getData(word: String, isOnline: Boolean) {
         liveDataToObserve.value = AppState.Loading(null)
         cancelJob()
+        viewModelCoroutineScope.launch { startInteractor(word, isOnline) }
+    }
 
-        viewModelCoroutineScope.launch {
-            withContext(Dispatchers.IO) {
-            liveDataToObserve.postValue(interactor.getData(word, isOnline)) }
-            }
+    private suspend fun startInteractor(word: String, isOnline: Boolean) {
+        liveDataToObserve.postValue(interactor.getData(word, isOnline))
+    }
 
-
-
-        }
-
-    fun handleError(error: Throwable) {
+     fun handleError(error: Throwable) {
         liveDataToObserve.postValue(AppState.Error(error))
+    }
+
+    override fun onCleared() {
+        liveDataToObserve.value = AppState.Success(null)
+        super.onCleared()
     }
 }

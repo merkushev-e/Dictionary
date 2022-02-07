@@ -1,10 +1,12 @@
 package ru.gb.dictionary
 
 import android.app.Application
+import org.koin.android.ext.koin.androidContext
 
-import geekbrains.ru.translator.di.application
-import geekbrains.ru.translator.di.mainScreen
+import ru.gb.dictionary.DI.application
+import ru.gb.dictionary.DI.mainScreen
 import org.koin.core.context.startKoin
+import ru.gb.dictionary.DI.historyScreen
 
 
 class App : Application() {
@@ -12,7 +14,8 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         startKoin {
-            modules(listOf(application, mainScreen))
+            androidContext(applicationContext)
+            modules(listOf(application, mainScreen, historyScreen))
         }
     }
 }

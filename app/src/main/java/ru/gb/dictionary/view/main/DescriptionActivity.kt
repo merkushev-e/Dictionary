@@ -2,10 +2,12 @@ package ru.gb.dictionary.view.main
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.icu.number.NumberFormatter.with
+
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import ru.gb.dictionary.R
@@ -63,6 +65,7 @@ class DescriptionActivity : AppCompatActivity() {
     private fun usePicassoToLoadPhoto(imageView: ImageView, imageLink: String) {
         Picasso.get().load(HTTPS+imageLink)
             .placeholder(R.drawable.ic_no_photo_vector).fit().centerCrop()
+            .tag(PICASSO_TAG)
             .into(imageView, object : Callback {
                 override fun onSuccess() {
                     stopRefreshAnimationIfNeeded()
@@ -74,6 +77,12 @@ class DescriptionActivity : AppCompatActivity() {
                 }
             })
     }
+
+    private fun cleanup(imageView: ImageView) {
+        Picasso.get().cancelTag(PICASSO_TAG)
+        imageView.setImageDrawable(null)
+    }
+
 
 
     private fun startLoadingOrShowError() {
@@ -92,6 +101,13 @@ class DescriptionActivity : AppCompatActivity() {
     }
 
 
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cleanup(binding.descriptionImageview)
+    }
+
+
     private fun stopRefreshAnimationIfNeeded() {
         if (binding.descriptionScreenSwipeRefreshLayout.isRefreshing) {
             binding.descriptionScreenSwipeRefreshLayout.isRefreshing = false
@@ -105,6 +121,7 @@ class DescriptionActivity : AppCompatActivity() {
         private const val WORD_EXTRA = "Word extra"
         private const val DESCRIPTION_EXTRA = "Descr Extra"
         private const val URL_EXTRA = "Url Extra"
+        private const val PICASSO_TAG = "fetch_images"
 
         fun getIntent(
             context: Context,

@@ -37,6 +37,7 @@ class MainAdapter(
 
 
     inner class RecyclerItemViewHolder(view: View) : RecyclerView.ViewHolder(view){
+
         val headerTextView = itemView.findViewById<TextView>(R.id.header_textview_recycler_item)
         val descriptionTextView = itemView.findViewById<TextView>(R.id.description_textview_recycler_item)
 
@@ -44,7 +45,7 @@ class MainAdapter(
             if(layoutPosition != RecyclerView.NO_POSITION){
                 headerTextView.text = data.text
                 descriptionTextView.text =
-                    data.meanings[0].translation?.translation
+                    data.meanings?.get(0)?.translation?.translation
                 itemView.setOnClickListener { onListItemClickListener.onItemClick(data) }
 
             }

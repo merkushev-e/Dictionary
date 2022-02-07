@@ -2,12 +2,10 @@ package ru.gb.dictionary.model.retrofit
 
 
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import io.reactivex.rxjava3.core.Observable
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.gb.dictionary.model.DataSource
 import ru.gb.dictionary.model.data.DataModel

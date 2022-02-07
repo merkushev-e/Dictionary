@@ -1,5 +1,7 @@
 package ru.gb.dictionary.view.main
 
+
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View.GONE
@@ -17,6 +19,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.gb.dictionary.R
 import ru.gb.dictionary.Utils.convertMeaningsToString
 import ru.gb.dictionary.databinding.ActivityMainBinding
+import ru.gb.dictionary.view.history.HistoryActivity
 import ru.gb.dictionary.viewmodel.MainViewModel
 
 
@@ -30,8 +33,8 @@ class MainActivity : AppCompatActivity() {
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
             "BOTTOM_SHEET_FRAGMENT"
     }
-    private lateinit var binding: ActivityMainBinding
 
+    private lateinit var binding: ActivityMainBinding
     private var adapter: MainAdapter? = null
 
     private val onListItemClickListener =
@@ -39,8 +42,8 @@ class MainActivity : AppCompatActivity() {
             startActivity(
                 DescriptionActivity.getIntent(
                     this@MainActivity,
-                    data.text,
-                    convertMeaningsToString(data.meanings),
+                    data.text!!,
+                    convertMeaningsToString(data.meanings!!),
                     data.meanings[0].imageUrl
                 )
             )
@@ -114,7 +117,7 @@ class MainActivity : AppCompatActivity() {
         binding.appBarMain.mainContent.errorTextview.text =
             error ?: getString(R.string.undefined_error)
         binding.appBarMain.mainContent.reloadButton.setOnClickListener {
-            viewModel.getData("hi",true)
+            viewModel.getData("",true)
             viewModel.liveData.observe(this) { appState ->
                 renderData(appState)
             }
@@ -170,10 +173,7 @@ class MainActivity : AppCompatActivity() {
                         return true
                     }
                     R.id.action_drawer_history -> {
-                        Toast.makeText(
-                            applicationContext, getString(R.string.history_open),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        startActivity(Intent(this@MainActivity, HistoryActivity::class.java))
                         return true
                     }
                 }

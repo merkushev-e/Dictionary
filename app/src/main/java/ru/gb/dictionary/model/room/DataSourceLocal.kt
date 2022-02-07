@@ -1,11 +1,10 @@
 package ru.gb.dictionary.model.room
 
-import io.reactivex.rxjava3.core.Observable
-import ru.gb.dictionary.model.DataSource
-import ru.gb.dictionary.model.data.DataModel
 
-class DataSourceLocal : DataSource<List<DataModel>> {
-    override suspend fun getData(word: String): List<DataModel> {
-        TODO("Not yet implemented")
-    }
+import ru.gb.dictionary.AppState
+import ru.gb.dictionary.model.DataSource
+
+
+interface DataSourceLocal<T> : DataSource<T> {
+    suspend fun saveToDB(appState: AppState)
 }

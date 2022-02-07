@@ -1,6 +1,6 @@
 package ru.gb.dictionary.model.repository
 
-import io.reactivex.rxjava3.core.Observable
+
 import ru.gb.dictionary.model.DataSource
 import ru.gb.dictionary.model.data.DataModel
 
