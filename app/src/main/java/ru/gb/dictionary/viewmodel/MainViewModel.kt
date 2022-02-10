@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.*
-import ru.gb.dictionary.AppState
+import ru.gb.model.AppState
 import ru.gb.dictionary.presenter.MainInteract
 
 
@@ -13,8 +13,8 @@ class MainViewModel (
     ) : ViewModel() {
 
 
-    private val liveDataToObserve: MutableLiveData<AppState> = MutableLiveData()
-    val liveData: LiveData<AppState> = liveDataToObserve
+    private val liveDataToObserve: MutableLiveData<ru.gb.model.AppState> = MutableLiveData()
+    val liveData: LiveData<ru.gb.model.AppState> = liveDataToObserve
 
 
     protected val viewModelCoroutineScope = CoroutineScope(
@@ -26,7 +26,7 @@ class MainViewModel (
 
 
     override fun onCleared() {
-        liveDataToObserve.value = AppState.Success(null)
+        liveDataToObserve.value = ru.gb.model.AppState.Success(null)
         cancelJob()
     }
 
@@ -36,7 +36,7 @@ class MainViewModel (
 
 
     fun getData(word: String, isOnline: Boolean) {
-        liveDataToObserve.value = AppState.Loading(null)
+        liveDataToObserve.value = ru.gb.model.AppState.Loading(null)
         cancelJob()
 
         viewModelCoroutineScope.launch {
@@ -49,6 +49,6 @@ class MainViewModel (
         }
 
     fun handleError(error: Throwable) {
-        liveDataToObserve.postValue(AppState.Error(error))
+        liveDataToObserve.postValue(ru.gb.model.AppState.Error(error))
     }
 }

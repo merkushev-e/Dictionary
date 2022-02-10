@@ -2,7 +2,7 @@ package ru.gb.dictionary.view.main
 
 import android.content.Context
 import android.content.Intent
-import android.icu.number.NumberFormatter.with
+
 
 import android.os.Bundle
 import android.view.MenuItem
@@ -11,9 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import ru.gb.dictionary.R
-import ru.gb.dictionary.Utils.UI.AlertDialogFragment
 import ru.gb.dictionary.Utils.isOnline
+
 import ru.gb.dictionary.databinding.ActivityDescriptionBinding
+import ru.gb.utils.UI.AlertDialogFragment
 
 class DescriptionActivity : AppCompatActivity() {
 

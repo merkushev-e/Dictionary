@@ -10,12 +10,11 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import ru.gb.dictionary.AppState
 import ru.gb.dictionary.view.searchdialog.SearchDialogFragment
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 import ru.gb.dictionary.R
 import ru.gb.dictionary.Utils.convertMeaningsToString
 import ru.gb.dictionary.databinding.ActivityMainBinding
@@ -44,7 +43,7 @@ class MainActivity : AppCompatActivity() {
                     this@MainActivity,
                     data.text!!,
                     convertMeaningsToString(data.meanings!!),
-                    data.meanings[0].imageUrl
+                    data.meanings!![0].imageUrl
                 )
             )
         }
@@ -73,9 +72,9 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-     private fun renderData(appState: AppState) {
+     private fun renderData(appState: ru.gb.model.AppState) {
         when (appState) {
-            is AppState.Success -> {
+            is ru.gb.model.AppState.Success -> {
                 val dataModel = appState.data
                 if (dataModel == null || dataModel.isEmpty()) {
                     showErrorScreen(getString(R.string.empty_server_response_on_success))
@@ -91,19 +90,19 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-            is AppState.Loading -> {
+            is ru.gb.model.AppState.Loading -> {
                 showViewLoading()
                 if (appState.progress != null) {
                     binding.appBarMain.mainContent.progressBarHorizontal.visibility = VISIBLE
                     binding.appBarMain.mainContent.progressBarRound.visibility = GONE
                     binding.appBarMain.mainContent.progressBarHorizontal.progress =
-                        appState.progress
+                        appState.progress!!
                 } else {
                     binding.appBarMain.mainContent.progressBarHorizontal.visibility = GONE
                     binding.appBarMain.mainContent.progressBarRound.visibility = VISIBLE
                 }
             }
-            is AppState.Error -> {
+            is ru.gb.model.AppState.Error -> {
                 showErrorScreen(appState.error.message)
             }
         }
