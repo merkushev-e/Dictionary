@@ -3,6 +3,7 @@ package ru.gb.dictionary.view.history
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import org.koin.android.scope.currentScope
 import org.koin.android.viewmodel.ext.android.viewModel
 import ru.gb.historyscreen.R
 import ru.gb.historyscreen.databinding.ActivityHistoryBinding
@@ -14,7 +15,7 @@ import ru.gb.utils.UI.AlertDialogFragment
 class HistoryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHistoryBinding
-    private val viewModel: HistoryViewModel by viewModel()
+    private val viewModel: HistoryViewModel by currentScope.inject<HistoryViewModel>()
     private val adapter: HistoryAdapter by lazy { HistoryAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {

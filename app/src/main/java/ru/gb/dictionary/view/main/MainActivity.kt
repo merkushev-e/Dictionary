@@ -14,6 +14,7 @@ import ru.gb.dictionary.view.searchdialog.SearchDialogFragment
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
+import org.koin.android.scope.currentScope
 import org.koin.android.viewmodel.ext.android.viewModel
 import ru.gb.dictionary.R
 import ru.gb.dictionary.Utils.convertMeaningsToString
@@ -25,7 +26,7 @@ import ru.gb.dictionary.viewmodel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel: MainViewModel by viewModel()
+    private val viewModel: MainViewModel by currentScope.inject<MainViewModel>()
 
 
     companion object {
