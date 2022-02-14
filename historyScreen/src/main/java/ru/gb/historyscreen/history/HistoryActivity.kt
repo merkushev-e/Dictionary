@@ -4,11 +4,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import org.koin.android.scope.currentScope
-import org.koin.android.viewmodel.ext.android.viewModel
 import ru.gb.historyscreen.R
 import ru.gb.historyscreen.databinding.ActivityHistoryBinding
 import ru.gb.historyscreen.history.HistoryViewModel
-import ru.gb.model.DataModel
+import ru.gb.model.data.DataModel
 import ru.gb.utils.UI.AlertDialogFragment
 
 

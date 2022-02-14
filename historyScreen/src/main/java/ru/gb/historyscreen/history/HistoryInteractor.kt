@@ -4,7 +4,7 @@ package values
 
 import ru.gb.core.Interactor
 import ru.gb.model.AppState
-import ru.gb.model.DataModel
+import ru.gb.model.data.DataModel
 import ru.gb.repository.repository.Repository
 import ru.gb.repository.repository.RepositoryLocal
 

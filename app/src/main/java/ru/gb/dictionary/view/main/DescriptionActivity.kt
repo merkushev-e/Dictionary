@@ -8,12 +8,14 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import ru.gb.dictionary.R
 import ru.gb.dictionary.Utils.isOnline
 
 import ru.gb.dictionary.databinding.ActivityDescriptionBinding
+import ru.gb.utils.Network.OnlineLiveData
 import ru.gb.utils.UI.AlertDialogFragment
 
 class DescriptionActivity : AppCompatActivity() {
@@ -87,18 +89,22 @@ class DescriptionActivity : AppCompatActivity() {
 
 
     private fun startLoadingOrShowError() {
-        if (isOnline(applicationContext)) {
-            setData()
-        } else {
-            AlertDialogFragment.newInstance(
-                getString(R.string.dialog_title_device_is_offline),
-                getString(R.string.dialog_message_device_is_offline)
-            ).show(
-                supportFragmentManager,
-                DIALOG_FRAGMENT_TAG
-            )
-            stopRefreshAnimationIfNeeded()
-        }
+        OnlineLiveData(this).observe(
+            this@DescriptionActivity,
+            Observer<Boolean> {
+                if (it) {
+                    setData()
+                } else {
+                    AlertDialogFragment.newInstance(
+                        getString(R.string.dialog_title_device_is_offline),
+                        getString(R.string.dialog_message_device_is_offline)
+                    ).show(
+                        supportFragmentManager,
+                        DIALOG_FRAGMENT_TAG
+                    )
+                    stopRefreshAnimationIfNeeded()
+                }
+            })
     }
 
 

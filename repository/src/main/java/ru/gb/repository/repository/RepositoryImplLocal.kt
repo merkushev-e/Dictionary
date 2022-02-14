@@ -2,13 +2,14 @@ package ru.gb.repository.repository
 
 
 
-import ru.gb.model.DataModel
+
+import ru.gb.model.dto.SearchResultDto
 import ru.gb.repository.room.DataSourceLocal
 
-class RepositoryImplLocal(private val dataSource: DataSourceLocal<List<DataModel>>) :
-    RepositoryLocal<List<DataModel>> {
+class RepositoryImplLocal(private val dataSource: DataSourceLocal<List<SearchResultDto>>) :
+    RepositoryLocal<List<SearchResultDto>> {
 
-    override suspend fun getData(word: String): List<DataModel> {
+    override suspend fun getData(word: String): List<SearchResultDto> {
         return dataSource.getData(word)
     }
 

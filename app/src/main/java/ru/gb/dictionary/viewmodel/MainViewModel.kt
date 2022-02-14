@@ -7,15 +7,12 @@ import kotlinx.coroutines.*
 import ru.gb.model.AppState
 import ru.gb.dictionary.presenter.MainInteract
 
-
 class MainViewModel (
     private val interactor: MainInteract
     ) : ViewModel() {
 
-
-    private val liveDataToObserve: MutableLiveData<ru.gb.model.AppState> = MutableLiveData()
-    val liveData: LiveData<ru.gb.model.AppState> = liveDataToObserve
-
+    private val liveDataToObserve: MutableLiveData<AppState> = MutableLiveData()
+    val liveData: LiveData<AppState> = liveDataToObserve
 
     protected val viewModelCoroutineScope = CoroutineScope(
         Dispatchers.Main
@@ -26,7 +23,7 @@ class MainViewModel (
 
 
     override fun onCleared() {
-        liveDataToObserve.value = ru.gb.model.AppState.Success(null)
+        liveDataToObserve.value = AppState.Success(null)
         cancelJob()
     }
 
@@ -34,21 +31,17 @@ class MainViewModel (
         viewModelCoroutineScope.coroutineContext.cancelChildren()
     }
 
-
     fun getData(word: String, isOnline: Boolean) {
-        liveDataToObserve.value = ru.gb.model.AppState.Loading(null)
+        liveDataToObserve.value = AppState.Loading(null)
         cancelJob()
 
         viewModelCoroutineScope.launch {
             withContext(Dispatchers.IO) {
             liveDataToObserve.postValue(interactor.getData(word, isOnline)) }
             }
-
-
-
         }
 
     fun handleError(error: Throwable) {
-        liveDataToObserve.postValue(ru.gb.model.AppState.Error(error))
+        liveDataToObserve.postValue(AppState.Error(error))
     }
 }

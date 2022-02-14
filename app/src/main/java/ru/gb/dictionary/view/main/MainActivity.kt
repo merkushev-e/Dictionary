@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ru.gb.dictionary.view.searchdialog.SearchDialogFragment
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Observer
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import org.koin.android.scope.currentScope
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -21,13 +23,14 @@ import ru.gb.dictionary.Utils.convertMeaningsToString
 import ru.gb.dictionary.databinding.ActivityMainBinding
 import ru.gb.dictionary.view.history.HistoryActivity
 import ru.gb.dictionary.viewmodel.MainViewModel
-
+import ru.gb.utils.Network.OnlineLiveData
+import ru.gb.utils.UI.viewById
 
 
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by currentScope.inject<MainViewModel>()
-
+    protected var isNetworkAvailable: Boolean = true
 
     companion object {
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
@@ -36,6 +39,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private var adapter: MainAdapter? = null
+
+    val searchFAB by viewById<FloatingActionButton>(R.id.search_fab)
 
     private val onListItemClickListener =
         MainAdapter.OnListItemClickListener { data ->
@@ -51,13 +56,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        subscribeToNetworkChange()
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
 
         initDrawer(initToolbar())
 
-        binding.appBarMain.mainContent.searchFab.setOnClickListener {
+
+
+        searchFAB.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
             searchDialogFragment.setOnSearchClickListener { searchWord ->
                 viewModel.getData(searchWord, true)
@@ -181,6 +190,21 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+    }
+
+    private fun subscribeToNetworkChange() {
+        OnlineLiveData(this).observe(
+            this,
+            Observer<Boolean> {
+                isNetworkAvailable = it
+                if (!isNetworkAvailable) {
+                    Toast.makeText(
+                        this,
+                        R.string.dialog_message_device_is_offline,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            })
     }
 
 

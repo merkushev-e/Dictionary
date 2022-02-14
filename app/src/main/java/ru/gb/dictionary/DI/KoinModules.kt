@@ -14,7 +14,8 @@ import ru.gb.dictionary.view.main.MainActivity
 
 import ru.gb.dictionary.viewmodel.MainViewModel
 import ru.gb.historyscreen.history.HistoryViewModel
-import ru.gb.model.DataModel
+import ru.gb.model.data.DataModel
+import ru.gb.model.dto.SearchResultDto
 import ru.gb.repository.repository.Repository
 import ru.gb.repository.repository.RepositoryImpl
 import ru.gb.repository.repository.RepositoryImplLocal
@@ -24,14 +25,16 @@ import ru.gb.repository.room.HistoryDataBase
 import ru.gb.repository.room.RoomDataBaseImplementation
 import values.HistoryInteractor
 
+
+
 val application = module {
     single { Room.databaseBuilder(get(), HistoryDataBase::class.java, "HistoryDB").build() }
     single { get<HistoryDataBase>().historyDao() }
-    single<Repository<List<DataModel>>> { RepositoryImpl(RetrofitImplementation()) }
-    single<RepositoryLocal<List<DataModel>>> { RepositoryImplLocal(RoomDataBaseImplementation(get()))
+    single<Repository<List<SearchResultDto>>> { RepositoryImpl(RetrofitImplementation()) }
+    single<RepositoryLocal<List<SearchResultDto>>> {
+        RepositoryImplLocal(RoomDataBaseImplementation(get()))
     }
 }
-
 val mainScreen = module {
     scope(named<MainActivity>()){
         scoped { MainInteract(get(),get()) }

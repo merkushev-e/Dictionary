@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ru.gb.dictionary.R
-import ru.gb.model.DataModel
+import ru.gb.model.data.DataModel
 
 
 class MainAdapter(
