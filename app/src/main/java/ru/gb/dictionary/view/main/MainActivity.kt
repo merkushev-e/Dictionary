@@ -1,17 +1,28 @@
 package ru.gb.dictionary.view.main
 
 
+import android.animation.ObjectAnimator
+import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.MenuItem
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewTreeObserver
+import android.view.animation.AnticipateInterpolator
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.gb.dictionary.view.searchdialog.SearchDialogFragment
 import androidx.appcompat.widget.Toolbar
+import androidx.core.animation.doOnEnd
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -27,7 +38,13 @@ import ru.gb.utils.Network.OnlineLiveData
 import ru.gb.utils.UI.viewById
 
 
-class MainActivity : AppCompatActivity() {
+private const val SLIDE_LEFT_DURATION = 1000L
+private const val COUNTDOWN_DURATION = 2000L
+private const val COUNTDOWN_INTERVAL = 1000L
+
+class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
+
+
 
     private val viewModel: MainViewModel by currentScope.inject<MainViewModel>()
     protected var isNetworkAvailable: Boolean = true
@@ -40,6 +57,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var adapter: MainAdapter? = null
 
+    @RequiresApi(Build.VERSION_CODES.S)
+    val blurEffect = RenderEffect.createBlurEffect(16f,16f, Shader.TileMode.MIRROR)
+
     val searchFAB by viewById<FloatingActionButton>(R.id.search_fab)
 
     private val onListItemClickListener =
@@ -47,16 +67,65 @@ class MainActivity : AppCompatActivity() {
             startActivity(
                 DescriptionActivity.getIntent(
                     this@MainActivity,
-                    data.text!!,
-                    convertMeaningsToString(data.meanings!!),
-                    data.meanings!![0].imageUrl
+                    data.text,
+                    convertMeaningsToString(data.meanings),
+                    data.meanings[0].imageUrl
                 )
             )
         }
 
+
+    private fun setDefaultSplashScreen() {
+        checkApiVersion{
+            setSplashScreenHideAnimation()
+        }
+
+        setSplashScreenDuration()
+    }
+
+    private fun checkApiVersion(action:()->Unit){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            action()
+        }
+    }
+
+    @RequiresApi(31)
+    private fun setSplashScreenHideAnimation() {
+        splashScreen.setOnExitAnimationListener {
+            it.animate().x(1000f).setInterpolator(AnticipateInterpolator()).withEndAction { it.remove() }
+        }
+    }
+
+    private fun setSplashScreenDuration() {
+        var isHideSplashScreen = false
+
+        object : CountDownTimer(COUNTDOWN_DURATION, COUNTDOWN_INTERVAL) {
+            override fun onTick(millisUntilFinished: Long) {}
+            override fun onFinish() {
+                isHideSplashScreen = true
+            }
+        }.start()
+
+        val content: View = findViewById(android.R.id.content)
+        content.viewTreeObserver.addOnPreDrawListener(
+            object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    return if (isHideSplashScreen) {
+                        content.viewTreeObserver.removeOnPreDrawListener(this)
+                        true
+                    } else {
+                        false
+                    }
+                }
+            }
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setDefaultSplashScreen()
         subscribeToNetworkChange()
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -67,20 +136,39 @@ class MainActivity : AppCompatActivity() {
 
 
         searchFAB.setOnClickListener {
+
+            addBlurBackground()
+
             val searchDialogFragment = SearchDialogFragment.newInstance()
             searchDialogFragment.setOnSearchClickListener { searchWord ->
+                removeBlurBackground()
                 viewModel.getData(searchWord, true)
                 viewModel.liveData.observe(this) { appState ->
                     renderData(appState)
                 }
 
+
+
             }
             searchDialogFragment.show(
                 supportFragmentManager,
                 BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
+
         }
     }
 
+
+    private fun addBlurBackground(){
+        checkApiVersion {
+            binding.appBarMain.mainContent.mainActivityRecyclerview.setRenderEffect(blurEffect)
+        }
+    }
+
+    private fun removeBlurBackground(){
+        checkApiVersion {
+            binding.appBarMain.mainContent.mainActivityRecyclerview.setRenderEffect(null)
+        }
+    }
 
      private fun renderData(appState: ru.gb.model.AppState) {
         when (appState) {
@@ -205,6 +293,10 @@ class MainActivity : AppCompatActivity() {
                     ).show()
                 }
             })
+    }
+
+    override fun onDismiss(dialog: DialogInterface?) {
+        removeBlurBackground()
     }
 
 

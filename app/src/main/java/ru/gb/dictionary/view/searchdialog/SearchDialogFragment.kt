@@ -1,5 +1,6 @@
 package ru.gb.dictionary.view.searchdialog
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -77,10 +78,22 @@ class SearchDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        if (activity is DialogInterface.OnDismissListener) {
+            (activity as DialogInterface.OnDismissListener).onDismiss(dialog)
+        }
+
+
+    }
+
+
+
     fun interface OnSearchClickListener {
 
         fun onClick(searchWord: String)
     }
+
 
     companion object {
         fun newInstance() =
