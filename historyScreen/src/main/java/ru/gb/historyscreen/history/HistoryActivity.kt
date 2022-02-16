@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import org.koin.android.scope.currentScope
 import ru.gb.historyscreen.R
 import ru.gb.historyscreen.databinding.ActivityHistoryBinding
+import ru.gb.historyscreen.history.HistoryAdapter
 import ru.gb.historyscreen.history.HistoryViewModel
 import ru.gb.model.data.DataModel
 import ru.gb.utils.UI.AlertDialogFragment

@@ -1,4 +1,4 @@
-package ru.gb.dictionary.view.history
+package ru.gb.historyscreen.history
 
 import android.view.LayoutInflater
 import android.view.View

@@ -14,7 +14,6 @@ import ru.gb.dictionary.view.main.MainActivity
 
 import ru.gb.dictionary.viewmodel.MainViewModel
 import ru.gb.historyscreen.history.HistoryViewModel
-import ru.gb.model.data.DataModel
 import ru.gb.model.dto.SearchResultDto
 import ru.gb.repository.repository.Repository
 import ru.gb.repository.repository.RepositoryImpl
@@ -23,7 +22,7 @@ import ru.gb.repository.repository.RepositoryLocal
 import ru.gb.repository.retrofit.RetrofitImplementation
 import ru.gb.repository.room.HistoryDataBase
 import ru.gb.repository.room.RoomDataBaseImplementation
-import values.HistoryInteractor
+import ru.gb.historyscreen.history.HistoryInteractor
 
 
 

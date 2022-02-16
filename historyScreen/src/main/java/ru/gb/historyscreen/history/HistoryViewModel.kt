@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.*
-import values.HistoryInteractor
 
 
 class HistoryViewModel(private val interactor: HistoryInteractor): ViewModel()  {
