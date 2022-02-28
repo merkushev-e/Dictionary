@@ -5,18 +5,15 @@ plugins {
 }
 
 android {
-    compileSdk 31
-
+    compileSdkVersion Config.compile_sdk
     defaultConfig {
-        applicationId "ru.gb.dictionary"
-        minSdk 24
-        targetSdk 31
-        versionCode 1
-        versionName "1.0"
-
+        applicationId Config.application_id
+        minSdkVersion Config.min_sdk
+        targetSdkVersion Config.target_sdk
+        versionCode Releases.version_code
+        versionName Releases.version_name
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -24,38 +21,52 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
-    buildFeatures {
-        viewBinding true
+        sourceCompatibility Config.java_version
+        targetCompatibility Config.java_version
     }
 }
 
 dependencies {
 
-    //RxJava3
-    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
-    implementation 'io.reactivex.rxjava3:rxjava:3.1.3'
+    //Modules
+    implementation project(Modules.core)
+    implementation project(Modules.model)
+    implementation project(Modules.repository)
+    implementation project(Modules.utils)
+    implementation project(Modules.historyscreen)
 
-    // Retrofit 2
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
 
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.5.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    //Picasso
+    
+    implementation Picasso.picasso
+
+    //Design
+    implementation Design.appcompat
+    implementation Design.material
+
+
+    //Kotlin
+    implementation Kotlin.core
+    implementation Kotlin.stdlib
+    implementation Kotlin.coroutines_core
+    implementation Kotlin.coroutines_android
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
+
+    //Koin for Android
+    implementation Koin.koin_android
+    implementation Koin.koin_view_model
+
+    //Room
+    implementation Room.runtime
+    kapt Room.compiler
+    implementation Room.room_ktx
+
+
+    //Test
+    testImplementation TestImpl.junit
+    androidTestImplementation TestImpl.runner
+    androidTestImplementation TestImpl.espresso
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
 }

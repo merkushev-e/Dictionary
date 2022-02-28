@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ru.gb.dictionary.R
-import ru.gb.dictionary.model.data.DataModel
+import ru.gb.model.data.DataModel
 
 
 class MainAdapter(
@@ -38,10 +38,13 @@ class MainAdapter(
 
     inner class RecyclerItemViewHolder(view: View) : RecyclerView.ViewHolder(view){
 
+        val headerTextView = itemView.findViewById<TextView>(R.id.header_textview_recycler_item)
+        val descriptionTextView = itemView.findViewById<TextView>(R.id.description_textview_recycler_item)
+
         fun bind (data: DataModel){
             if(layoutPosition != RecyclerView.NO_POSITION){
-                itemView.findViewById<TextView>(R.id.header_textview_recycler_item).text = data.text
-                itemView.findViewById<TextView>(R.id.description_textview_recycler_item).text =
+                headerTextView.text = data.text
+                descriptionTextView.text =
                     data.meanings?.get(0)?.translation?.translation
                 itemView.setOnClickListener { onListItemClickListener.onItemClick(data) }
 
@@ -53,7 +56,7 @@ class MainAdapter(
 
 
 
-    interface OnListItemClickListener{
+   fun interface OnListItemClickListener{
         fun onItemClick(data: DataModel)
     }
 
