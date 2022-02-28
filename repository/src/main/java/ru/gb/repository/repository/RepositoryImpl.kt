@@ -2,7 +2,7 @@ package ru.gb.repository.repository
 
 
 
-import ru.gb.model.data.DataModel
+
 import ru.gb.model.dto.SearchResultDto
 import ru.gb.repository.DataSource
 

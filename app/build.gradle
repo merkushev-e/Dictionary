@@ -51,6 +51,7 @@ dependencies {
     implementation Kotlin.stdlib
     implementation Kotlin.coroutines_core
     implementation Kotlin.coroutines_android
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
 
     //Koin for Android
     implementation Koin.koin_android

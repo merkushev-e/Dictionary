@@ -17,6 +17,7 @@ dependencies {
     implementation Kotlin.stdlib
     implementation Kotlin.coroutines_core
     implementation Kotlin.coroutines_android
+    implementation 'androidx.test.ext:junit-ktx:1.1.3'
 
     //Test
     testImplementation TestImpl.junit

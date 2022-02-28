@@ -11,8 +11,12 @@ class MainViewModel (
     private val interactor: MainInteract
     ) : ViewModel() {
 
+
+
     private val liveDataToObserve: MutableLiveData<AppState> = MutableLiveData()
     val liveData: LiveData<AppState> = liveDataToObserve
+
+
 
     protected val viewModelCoroutineScope = CoroutineScope(
         Dispatchers.Main
