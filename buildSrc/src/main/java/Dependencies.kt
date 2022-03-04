@@ -1,3 +1,6 @@
+import Versions.mockitoInlineVersion
+import Versions.mockitoKotlinVersion
+import Versions.mockitoVersion
 import org.gradle.api.JavaVersion
 
 object Config {
@@ -58,6 +61,14 @@ object Versions {
     const val espressoCore = "3.4.0"
     //Picasso
     const val picassoversion = "2.71828"
+
+    //Mockito
+    const val mockitoVersion = "3.3.3"
+    const val mockitoInlineVersion = "2.8.9"
+    const val mockitoKotlinVersion = "1.5.0"
+
+
+
 }
 
 object Design {
@@ -109,4 +120,10 @@ object TestImpl {
     const val junit = "junit:junit:${Versions.jUnit}"
     const val runner = "androidx.test:runner:${Versions.runner}"
     const val espresso = "androidx.test.espresso:espresso-core:${Versions.espressoCore}"
+}
+
+object Mockito {
+    const val mockito = "org.mockito:mockito-core:${mockitoVersion}"
+    const val mockitoInline = "org.mockito:mockito-inline:${mockitoInlineVersion}"
+    const val mockitoKotlin = "com.nhaarman:mockito-kotlin:${mockitoKotlinVersion}"
 }
