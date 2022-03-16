@@ -39,7 +39,7 @@ class MainInteractorTest {
     }
 
     @Test
-     fun getData_Test_remoteRepos() {
+    fun getData_Test_remoteRepos() {
         runBlocking {
             val searchQuery = "some query"
             val searchResult = listOf(mock(SearchResultDto::class.java))
@@ -57,17 +57,14 @@ class MainInteractorTest {
         runBlocking {
             val searchQuery = "some query"
             val searchResult = listOf(mock(SearchResultDto::class.java))
-            val appState = mock(AppState::class.java)
-
 
             `when`(repositoryLocal.getData(searchQuery)).thenReturn(searchResult)
 
             interactor.getData("some query", false)
-            
+
             verify(repositoryLocal, times(1)).getData(searchQuery)
         }
     }
-
 
 
     @Test
@@ -83,8 +80,6 @@ class MainInteractorTest {
             verify(repositoryLocal, times(1)).saveToDB(data)
         }
     }
-
-
 
 
 }

@@ -34,5 +34,13 @@ dependencies {
     androidTestImplementation TestImpl.espresso
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    //Mockito
+    testImplementation Mockito.mockito
+    testImplementation Mockito.mockitoInline
+    testImplementation(Mockito.mockitoKotlin) {
+        exclude group: 'org.jetbrains.kotlin'
+        exclude group: 'org.mockito'
+    }
+
 
 }
