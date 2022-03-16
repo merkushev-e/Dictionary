@@ -1,5 +1,6 @@
 package ru.gb.dictionary.view.searchdialog
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,18 +16,12 @@ class SearchDialogFragment : BottomSheetDialogFragment() {
     private var _binding: FragmentSearchDialogBinding? = null
     private val binding get() = _binding!!
 
-    private var onSearchClickListener: OnSearchClickListener? = null
-
-    private val onSearchButtonClickListener =
-        View.OnClickListener {
-            onSearchClickListener?.onClick(binding.searchEditText.text.toString())
-            dismiss()
-        }
+    private  var onSearchClickListener: OnSearchClickListener? = null
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
+    internal fun setOnSearchClickListener(listener: OnSearchClickListener) {
+        onSearchClickListener = listener
     }
 
 
@@ -49,16 +44,13 @@ class SearchDialogFragment : BottomSheetDialogFragment() {
         override fun afterTextChanged(s: Editable) {}
     }
 
-    internal fun setOnSearchClickListener(listener: OnSearchClickListener) {
-        onSearchClickListener = listener
-    }
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+
 
         _binding = FragmentSearchDialogBinding.inflate(inflater,container,false)
         return binding.root
@@ -66,7 +58,10 @@ class SearchDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.searchButtonTextview.setOnClickListener(onSearchButtonClickListener)
+        binding.searchButtonTextview.setOnClickListener{
+            onSearchClickListener?.onClick(binding.searchEditText.text.toString())
+            dismiss()
+        }
         binding.searchEditText.addTextChangedListener(textWatcher)
         addOnClearClickListener()
     }
@@ -83,10 +78,22 @@ class SearchDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
-    interface OnSearchClickListener {
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        if (activity is DialogInterface.OnDismissListener) {
+            (activity as DialogInterface.OnDismissListener).onDismiss(dialog)
+        }
+
+
+    }
+
+
+
+    fun interface OnSearchClickListener {
 
         fun onClick(searchWord: String)
     }
+
 
     companion object {
         fun newInstance() =

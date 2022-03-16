@@ -2,18 +2,29 @@ package ru.gb.dictionary.presenter
 
 
 
-import io.reactivex.rxjava3.core.Observable
-import ru.gb.dictionary.AppState
-import ru.gb.dictionary.model.data.DataModel
-import ru.gb.dictionary.model.repository.Repository
 
-class MainInteract(
-    private val remoteRepository: Repository<List<DataModel>>,
+import ru.gb.dictionary.Utils.mapSearchResultToResult
+import ru.gb.model.AppState
+import ru.gb.model.dto.SearchResultDto
+import ru.gb.repository.repository.Repository
+import ru.gb.repository.repository.RepositoryLocal
 
-): Interactor<AppState> {
-    override fun getData(word: String, fromRemoteSource: Boolean): Observable<AppState> {
-            return remoteRepository.getData(word).map { AppState.Success(it) }
+
+class MainInteract (
+    private val remoteRepository: Repository<List<SearchResultDto>>,
+    private val repositoryLocal: RepositoryLocal<List<SearchResultDto>>
+
+    ): ru.gb.core.Interactor<AppState> {
+    override suspend fun getData(word: String, fromRemoteSource: Boolean): AppState {
+        val appState: AppState
+
+        if (fromRemoteSource) {
+            appState = AppState.Success(mapSearchResultToResult(remoteRepository.getData(word)))
+            repositoryLocal.saveToDB(appState)
+        } else {
+            appState = AppState.Success(mapSearchResultToResult(repositoryLocal.getData(word)))
+        }
+        return appState
     }
-
 
 }
