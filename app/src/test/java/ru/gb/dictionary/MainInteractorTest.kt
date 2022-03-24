@@ -3,6 +3,7 @@ package ru.gb.dictionary
 
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito
@@ -30,6 +31,7 @@ class MainInteractorTest {
 
     @Mock
     private lateinit var repositoryLocal: RepositoryLocal<List<SearchResultDto>>
+
 
 
     @Before

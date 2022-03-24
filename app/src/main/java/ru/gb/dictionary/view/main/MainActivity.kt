@@ -1,7 +1,7 @@
 package ru.gb.dictionary.view.main
 
 
-import android.animation.ObjectAnimator
+
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.RenderEffect
@@ -28,10 +28,13 @@ import androidx.lifecycle.Observer
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import org.koin.android.scope.currentScope
+import org.koin.android.scope.scope
 import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.context.KoinContextHandler
 import ru.gb.dictionary.R
 import ru.gb.dictionary.Utils.convertMeaningsToString
 import ru.gb.dictionary.databinding.ActivityMainBinding
+import ru.gb.dictionary.presenter.MainInteract
 import ru.gb.dictionary.view.history.HistoryActivity
 import ru.gb.dictionary.viewmodel.MainViewModel
 import ru.gb.utils.Network.OnlineLiveData
@@ -57,8 +60,11 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
     private lateinit var binding: ActivityMainBinding
     private var adapter: MainAdapter? = null
 
-    @RequiresApi(Build.VERSION_CODES.S)
-    val blurEffect = RenderEffect.createBlurEffect(16f,16f, Shader.TileMode.MIRROR)
+
+
+
+
+
 
     val searchFAB by viewById<FloatingActionButton>(R.id.search_fab)
 
@@ -160,6 +166,7 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
 
     private fun addBlurBackground(){
         checkApiVersion {
+            val blurEffect = RenderEffect.createBlurEffect(16f,16f, Shader.TileMode.MIRROR)
             binding.appBarMain.mainContent.mainActivityRecyclerview.setRenderEffect(blurEffect)
         }
     }
@@ -297,6 +304,11 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
 
     override fun onDismiss(dialog: DialogInterface?) {
         removeBlurBackground()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        KoinContextHandler.stop()
     }
 
 

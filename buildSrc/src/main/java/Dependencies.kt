@@ -7,7 +7,7 @@ object Config {
     const val application_id = "ru.gb.dictionary"
     const val compile_sdk = 31
     const val min_sdk = 24
-    const val target_sdk = 31
+    const val target_sdk = 30
     val java_version = JavaVersion.VERSION_1_8
 }
 

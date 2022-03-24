@@ -3,6 +3,7 @@ package ru.gb.dictionary.DI
 
 
 import androidx.room.Room
+import kotlinx.coroutines.*
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -27,6 +28,7 @@ import ru.gb.historyscreen.history.HistoryInteractor
 
 
 val application = module {
+    single { Dispatchers.IO }
     single { Room.databaseBuilder(get(), HistoryDataBase::class.java, "HistoryDB").build() }
     single { get<HistoryDataBase>().historyDao() }
     single<Repository<List<SearchResultDto>>> { RepositoryImpl(RetrofitImplementation()) }
@@ -37,7 +39,7 @@ val application = module {
 val mainScreen = module {
     scope(named<MainActivity>()){
         scoped { MainInteract(get(),get()) }
-        viewModel { MainViewModel(get()) }
+        viewModel { MainViewModel(get(), get()) }
     }
 }
 
