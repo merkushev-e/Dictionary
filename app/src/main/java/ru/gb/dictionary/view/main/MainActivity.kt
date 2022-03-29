@@ -27,10 +27,13 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import org.koin.android.ext.android.getKoin
 import org.koin.android.scope.currentScope
-import org.koin.android.scope.scope
 import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.core.context.KoinContextHandler
+import org.koin.android.viewmodel.scope.viewModel
+import org.koin.core.qualifier.named
+
+
 import ru.gb.dictionary.R
 import ru.gb.dictionary.Utils.convertMeaningsToString
 import ru.gb.dictionary.databinding.ActivityMainBinding
@@ -49,7 +52,9 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
 
 
 
-    private val viewModel: MainViewModel by currentScope.inject<MainViewModel>()
+    private val viewModel: MainViewModel by viewModel<MainViewModel>()
+
+
     protected var isNetworkAvailable: Boolean = true
 
     companion object {
@@ -308,7 +313,6 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        KoinContextHandler.stop()
     }
 
 

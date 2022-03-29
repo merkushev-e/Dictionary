@@ -56,8 +56,8 @@ object Versions {
     const val roomCompiler = "2.4.1"
 
     //Test
-    const val jUnit = "4.12"
-    const val runner = "1.2.0"
+    const val jUnit = "4.13.2"
+    const val runner = "1.4.0"
     const val espressoCore = "3.4.0"
     //Picasso
     const val picassoversion = "2.71828"

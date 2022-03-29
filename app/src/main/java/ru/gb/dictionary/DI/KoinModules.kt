@@ -26,7 +26,6 @@ import ru.gb.repository.room.RoomDataBaseImplementation
 import ru.gb.historyscreen.history.HistoryInteractor
 
 
-
 val application = module {
     single { Dispatchers.IO }
     single { Room.databaseBuilder(get(), HistoryDataBase::class.java, "HistoryDB").build() }
@@ -37,10 +36,8 @@ val application = module {
     }
 }
 val mainScreen = module {
-    scope(named<MainActivity>()){
-        scoped { MainInteract(get(),get()) }
+        factory { MainInteract(get(),get()) }
         viewModel { MainViewModel(get(), get()) }
-    }
 }
 
 val historyScreen = module {
