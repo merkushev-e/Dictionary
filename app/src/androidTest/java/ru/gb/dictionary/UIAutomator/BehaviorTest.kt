@@ -4,14 +4,12 @@ import android.content.Context
 import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.*
-import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -40,8 +38,7 @@ class BehaviorTest {
 
     @Test
     fun test_MainActivityIsStarted() {
-        val res: BySelector = By.res(packageName, "search_fab")
-        val searchFab = uiDevice.findObject(res)
+        val searchFab = uiDevice.findObject(By.res(packageName, "search_fab"))
 
         Assert.assertNotNull(searchFab)
     }
@@ -59,28 +56,27 @@ class BehaviorTest {
     }
     @Test
     fun test_RecyclerViewNotNullAfterSearching() {
-
-        val fab = uiDevice.findObject(By.res(packageName, "search_fab"))
-        fab.click()
+        Espresso.onView(ViewMatchers.withId(R.id.search_fab))
+            .perform(click())
         uiDevice.wait(
             Until.findObject(By.res(packageName, "search_edit_text")),
             TIMEOUT
         )
-        val editText = uiDevice.findObject(By.res(packageName, "search_edit_text"))
+        val editText1 = uiDevice.findObject(By.res(packageName, "search_edit_text"))
 
-        editText.text = "Hi"
+        editText1.text = "Hi"
 
 
         Espresso.onView(ViewMatchers.withId(R.id.search_button_textview))
             .perform(click())
 
-        val recyclerViewItem =
+        val recyclerViewItem1 =
             uiDevice.wait(
                 Until.findObject(By.res(packageName, "header_textview_recycler_item")),
                 TIMEOUT
             )
 
-        Assert.assertNotNull(recyclerViewItem)
+        Assert.assertNotNull(recyclerViewItem1)
     }
 
 
@@ -88,8 +84,8 @@ class BehaviorTest {
 
     @Test
     fun test_OpenDetails(){
-        val fab = uiDevice.findObject(By.res(packageName, "search_fab"))
-        fab.click()
+        Espresso.onView(ViewMatchers.withId(R.id.search_fab))
+            .perform(click())
         uiDevice.wait(
             Until.findObject(By.res(packageName, "search_edit_text")),
             TIMEOUT
