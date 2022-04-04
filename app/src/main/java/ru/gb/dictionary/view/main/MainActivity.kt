@@ -1,34 +1,61 @@
 package ru.gb.dictionary.view.main
 
+
+
+import android.content.DialogInterface
+import android.content.Intent
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.MenuItem
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewTreeObserver
+import android.view.animation.AnticipateInterpolator
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import ru.gb.dictionary.AppState
-
-
-
-import ru.gb.dictionary.model.data.DataModel
-import ru.gb.dictionary.presenter.MainPresenterImpl
-import ru.gb.dictionary.presenter.Presenter
-import ru.gb.dictionary.view.BaseActivity
 import ru.gb.dictionary.view.searchdialog.SearchDialogFragment
-import ru.gb.dictionary.view.View
-
-
 import androidx.appcompat.widget.Toolbar
+import androidx.core.animation.doOnEnd
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Observer
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import org.koin.android.ext.android.getKoin
+import org.koin.android.scope.currentScope
+import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.android.viewmodel.scope.viewModel
+import org.koin.core.qualifier.named
 
 
 import ru.gb.dictionary.R
+import ru.gb.dictionary.Utils.convertMeaningsToString
 import ru.gb.dictionary.databinding.ActivityMainBinding
+import ru.gb.dictionary.presenter.MainInteract
+import ru.gb.dictionary.view.history.HistoryActivity
+import ru.gb.dictionary.viewmodel.MainViewModel
+import ru.gb.utils.Network.OnlineLiveData
+import ru.gb.utils.UI.viewById
 
 
-class MainActivity : BaseActivity<AppState>() {
+private const val SLIDE_LEFT_DURATION = 1000L
+private const val COUNTDOWN_DURATION = 2000L
+private const val COUNTDOWN_INTERVAL = 1000L
+
+class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
+
+
+
+    private val viewModel: MainViewModel by viewModel<MainViewModel>()
+
+
+    protected var isNetworkAvailable: Boolean = true
 
     companion object {
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
@@ -39,42 +66,125 @@ class MainActivity : BaseActivity<AppState>() {
     private var adapter: MainAdapter? = null
 
 
-    private val onListItemClickListener: MainAdapter.OnListItemClickListener =
-        object : MainAdapter.OnListItemClickListener {
-            override fun onItemClick(data: DataModel) {
-                Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
-            }
+
+
+
+
+
+    val searchFAB by viewById<FloatingActionButton>(R.id.search_fab)
+
+    private val onListItemClickListener =
+        MainAdapter.OnListItemClickListener { data ->
+            startActivity(
+                DescriptionActivity.getIntent(
+                    this@MainActivity,
+                    data.text,
+                    convertMeaningsToString(data.meanings),
+                    data.meanings[0].imageUrl
+                )
+            )
         }
+
+
+    private fun setDefaultSplashScreen() {
+        checkApiVersion{
+            setSplashScreenHideAnimation()
+        }
+
+        setSplashScreenDuration()
+    }
+
+    private fun checkApiVersion(action:()->Unit){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            action()
+        }
+    }
+
+    @RequiresApi(31)
+    private fun setSplashScreenHideAnimation() {
+        splashScreen.setOnExitAnimationListener {
+            it.animate().x(1000f).setInterpolator(AnticipateInterpolator()).withEndAction { it.remove() }
+        }
+    }
+
+    private fun setSplashScreenDuration() {
+        var isHideSplashScreen = false
+
+        object : CountDownTimer(COUNTDOWN_DURATION, COUNTDOWN_INTERVAL) {
+            override fun onTick(millisUntilFinished: Long) {}
+            override fun onFinish() {
+                isHideSplashScreen = true
+            }
+        }.start()
+
+        val content: View = findViewById(android.R.id.content)
+        content.viewTreeObserver.addOnPreDrawListener(
+            object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    return if (isHideSplashScreen) {
+                        content.viewTreeObserver.removeOnPreDrawListener(this)
+                        true
+                    } else {
+                        false
+                    }
+                }
+            }
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setDefaultSplashScreen()
+        subscribeToNetworkChange()
+
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         initDrawer(initToolbar())
 
-        binding.appBarMain.mainContent.searchFab.setOnClickListener {
+
+
+        searchFAB.setOnClickListener {
+
+            addBlurBackground()
+
             val searchDialogFragment = SearchDialogFragment.newInstance()
-            searchDialogFragment.setOnSearchClickListener(object :
-                SearchDialogFragment.OnSearchClickListener {
-                override fun onClick(searchWord: String) {
-                    presenter.getData(searchWord, true)
+            searchDialogFragment.setOnSearchClickListener { searchWord ->
+                removeBlurBackground()
+                viewModel.getData(searchWord, true)
+                viewModel.liveData.observe(this) { appState ->
+                    renderData(appState)
                 }
-            })
 
-            searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
+
+
+            }
+            searchDialogFragment.show(
+                supportFragmentManager,
+                BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
+
         }
-
-
     }
 
-    override fun createPresenter(): Presenter<AppState, View> {
-        return MainPresenterImpl()
+
+    private fun addBlurBackground(){
+        checkApiVersion {
+            val blurEffect = RenderEffect.createBlurEffect(16f,16f, Shader.TileMode.MIRROR)
+            binding.appBarMain.mainContent.mainActivityRecyclerview.setRenderEffect(blurEffect)
+        }
     }
 
-    override fun renderData(appState: AppState) {
+    private fun removeBlurBackground(){
+        checkApiVersion {
+            binding.appBarMain.mainContent.mainActivityRecyclerview.setRenderEffect(null)
+        }
+    }
+
+     private fun renderData(appState: ru.gb.model.AppState) {
         when (appState) {
-            is AppState.Success -> {
+            is ru.gb.model.AppState.Success -> {
                 val dataModel = appState.data
                 if (dataModel == null || dataModel.isEmpty()) {
                     showErrorScreen(getString(R.string.empty_server_response_on_success))
@@ -90,18 +200,19 @@ class MainActivity : BaseActivity<AppState>() {
                     }
                 }
             }
-            is AppState.Loading -> {
+            is ru.gb.model.AppState.Loading -> {
                 showViewLoading()
                 if (appState.progress != null) {
                     binding.appBarMain.mainContent.progressBarHorizontal.visibility = VISIBLE
                     binding.appBarMain.mainContent.progressBarRound.visibility = GONE
-                    binding.appBarMain.mainContent.progressBarHorizontal.progress = appState.progress
+                    binding.appBarMain.mainContent.progressBarHorizontal.progress =
+                        appState.progress!!
                 } else {
                     binding.appBarMain.mainContent.progressBarHorizontal.visibility = GONE
                     binding.appBarMain.mainContent.progressBarRound.visibility = VISIBLE
                 }
             }
-            is AppState.Error -> {
+            is ru.gb.model.AppState.Error -> {
                 showErrorScreen(appState.error.message)
             }
         }
@@ -112,9 +223,13 @@ class MainActivity : BaseActivity<AppState>() {
 
     private fun showErrorScreen(error: String?) {
         showViewError()
-        binding.appBarMain.mainContent.errorTextview.text = error ?: getString(R.string.undefined_error)
+        binding.appBarMain.mainContent.errorTextview.text =
+            error ?: getString(R.string.undefined_error)
         binding.appBarMain.mainContent.reloadButton.setOnClickListener {
-            presenter.getData("hi", true)
+            viewModel.getData("",true)
+            viewModel.liveData.observe(this) { appState ->
+                renderData(appState)
+            }
         }
     }
 
@@ -160,14 +275,14 @@ class MainActivity : BaseActivity<AppState>() {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
                 when (item.itemId) {
                     R.id.action_drawer_settings -> {
-                        Toast.makeText(applicationContext, "Settings has opened",
-                            Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            applicationContext, getString(R.string.settings_open),
+                            Toast.LENGTH_SHORT
+                        ).show()
                         return true
                     }
                     R.id.action_drawer_history -> {
-                        Toast.makeText(applicationContext, "Settings has opened",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        startActivity(Intent(this@MainActivity, HistoryActivity::class.java))
                         return true
                     }
                 }
@@ -177,7 +292,30 @@ class MainActivity : BaseActivity<AppState>() {
 
     }
 
+    private fun subscribeToNetworkChange() {
+        OnlineLiveData(this).observe(
+            this,
+            Observer<Boolean> {
+                isNetworkAvailable = it
+                if (!isNetworkAvailable) {
+                    Toast.makeText(
+                        this,
+                        R.string.dialog_message_device_is_offline,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            })
+    }
+
+    override fun onDismiss(dialog: DialogInterface?) {
+        removeBlurBackground()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
 
 
 }
+
 
