@@ -1,0 +1,35 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+
+
+}
+
+
+
+
+
+dependencies {
+
+
+    implementation project(Modules.utils)
+
+    implementation Design.appcompat
+
+    //Kotlin
+    implementation Kotlin.core
+    implementation Kotlin.stdlib
+
+    //Retrofit 2
+    implementation Retrofit.converter_gson
+
+    //Test
+    testImplementation TestImpl.junit
+    androidTestImplementation TestImpl.runner
+    androidTestImplementation TestImpl.espresso
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+
+
+}
