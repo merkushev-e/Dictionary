@@ -9,11 +9,11 @@ import androidx.test.uiautomator.UiDevice
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import ru.gb.dictionary.context
 
 @RunWith(AndroidJUnit4::class)
 @SdkSuppress(minSdkVersion = 18)
 class InitialTest {
-    private val context = ApplicationProvider.getApplicationContext<Context>()
     private val packageName = context.packageName
 
 

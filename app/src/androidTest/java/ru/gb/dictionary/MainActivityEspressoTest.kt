@@ -59,19 +59,19 @@ class MainActivityEspressoTest {
 
     @Test
     fun searchDialog_isDisplayed() {
-        onView(withId(R.id.search_fab)).perform(click())
+        espressoClick(R.id.search_fab)
         onView(withId(R.id.bottom_sheet_dialog_layout)).check(matches(isDisplayed()))
     }
 
     @Test
     fun searchDialog_isCompletelyDisplayed() {
-        onView(withId(R.id.search_fab)).perform(click())
+        espressoClick(R.id.search_fab)
         onView(withId(R.id.bottom_sheet_dialog_layout)).check(matches(isCompletelyDisplayed()))
     }
 
     @Test
     fun searchDialog_editText_isDisplayed() {
-        onView(withId(R.id.search_fab)).perform(click())
+        espressoClick(R.id.search_fab)
         onView(withId(R.id.search_edit_text)).check(matches(isDisplayed()))
     }
 
@@ -82,12 +82,13 @@ class MainActivityEspressoTest {
             modules(listOf(application, mainScreen, historyScreen))
         }
         onView(withId(R.id.search_fab)).perform(click())
-        onView(withId(R.id.search_edit_text)).perform(click())
+        espressoClick(R.id.search_edit_text)
         onView(withId(R.id.search_edit_text)).perform(
-            replaceText("hi"),
+            replaceText(TEST_HI),
             closeSoftKeyboard()
         )
-        onView(withId(R.id.search_button_textview)).perform(click())
+
+        espressoClick(R.id.search_button_textview)
         onView(isRoot()).perform(delay())
         onView(withId(R.id.main_activity_recyclerview)).check(matches(isDisplayed()))
         onView(withId(R.id.search_fab)).check(matches(isDisplayed()))

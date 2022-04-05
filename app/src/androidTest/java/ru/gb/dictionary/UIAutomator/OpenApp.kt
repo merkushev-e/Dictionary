@@ -10,13 +10,12 @@ import androidx.test.uiautomator.UiSelector
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import ru.gb.dictionary.uiDevice
 
 @RunWith(AndroidJUnit4::class)
 @SdkSuppress(minSdkVersion = 18)
 class OpenApp {
 
-    private val uiDevice: UiDevice =
-        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     @Test
     fun test_OpenSettings() {
