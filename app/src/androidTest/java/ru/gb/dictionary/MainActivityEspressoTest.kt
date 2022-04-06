@@ -95,6 +95,8 @@ class MainActivityEspressoTest {
         stopKoin()
     }
 
+
+
     private fun delay(): ViewAction? {
         return object : ViewAction {
             override fun getConstraints(): Matcher<View> = isRoot()
